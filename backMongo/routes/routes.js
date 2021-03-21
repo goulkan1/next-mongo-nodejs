@@ -40,20 +40,16 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/user", async (req, res) => {
-  try {
-    const cookie = req.cookies["jwt"];
-    const claims = jwt.verify(cookie, "secret");
+  const cookie = req.cookies["jwt"];
+  const claims = jwt.verify(cookie, "secret");
 
-    if (!claims) {
-      return res.status(401).send({ message: "unauth " });
-    }
-    const user = await User.findOne({ _id: claims._id });
-    const { password, ...data } = await user.toJSON();
-
-    res.send(data);
-  } catch {
+  if (!claims) {
     return res.status(401).send({ message: "unauth " });
   }
+  const user = await User.findOne({ _id: claims._id });
+  const { password, ...data } = await user.toJSON();
+
+  res.send(data);
 });
 
 router.post("/logout", (req, res) => {
